@@ -1,66 +1,52 @@
 {
   type StackNode = {
-    readonly value: string;
-    readonly next?: StackNode;
+    next?: StackNode;
+    value: string;
   };
-
-  class StackNodeImpl implements StackNode {
-    private _value: string;
-    private _next?: StackNode;
-    get value(): string {
-      return this._value;
-    }
-    get next(): StackNode {
-      return this._next;
-    }
-    set next(item: StackNode) {
-      this._next = item;
-    }
-    constructor(value: string) {
-      this._value = value;
-    }
-  }
-
   interface Stack {
     readonly size: number;
-    push(value: string): void;
-    pop(): string | undefined;
+    pop: () => string;
+    push: (value: string) => void;
   }
 
   class StackImpl implements Stack {
     private _size: number = 0;
     private head?: StackNode;
 
+    constructor(private capacity: number) {}
+
     get size() {
       return this._size;
     }
 
-    push(value: string) {
-      const node: StackNode = {
-        value,
-        next: this.head,
-      };
-      this.head = node;
-      this._size++;
-    }
-
-    pop(): string {
+    pop() {
       if (this.head == null) {
-        throw new Error('Stack is empty!');
+        throw new Error('Stack is Empty');
       }
       const node = this.head;
       this.head = node.next;
       this._size--;
+      return node.value;
+    }
 
-      return '';
+    push(value: string) {
+      if (this.capacity === this.size) {
+        throw new Error('Stack is Full');
+      }
+
+      const node: StackNode = { next: this.head, value };
+      this.head = node;
+      this._size++;
     }
   }
-  const stack = new StackImpl();
-  console.log(stack);
-  stack.push('Elle 1');
-  console.log(stack);
-  stack.push('Elle 2');
-  console.log(stack);
-  stack.pop();
-  console.log(stack);
+
+  const stack = new StackImpl(3);
+  stack.push('jhpark');
+  stack.push('jhpark2');
+  stack.push('jhpark3');
+
+  while (stack.size !== 0) {
+    console.log(stack.pop());
+  }
+  console.log(stack.pop());
 }
